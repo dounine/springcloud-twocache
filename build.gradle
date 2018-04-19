@@ -1,0 +1,32 @@
+version = '0.0.1-SNAPSHOT'
+
+buildscript {
+	ext{
+		springBootVersion = '1.5.9.RELEASE'
+	}
+
+	repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+group 'com.dounine.twocache'
+
+sourceCompatibility = 1.8
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+
+ext {
+	springCloudVersion = 'Dalston.SR5'
+}
+
+dependencies {
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: "${springBootVersion}"
+}
