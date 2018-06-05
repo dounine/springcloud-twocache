@@ -66,7 +66,8 @@ public class RedisAndLocalCache implements Cache {
     public void put(Object key, Object value) {
         this.local.put(key,new SimpleValueWrapper(value));
         this.redisCache.put(key,value);
-        this.notifyNodes(new NotifyMsg(NotifyType.PUT,node,key,value));
+        NotifyMsg notifyMsg = new NotifyMsg(NotifyType.PUT,node,key,value);
+        this.notifyNodes(notifyMsg);
     }
 
     private void notifyNodes(NotifyMsg notifyType){
@@ -83,7 +84,8 @@ public class RedisAndLocalCache implements Cache {
     @Override
     public void evict(Object key) {
         redisCache.evict(key);
-        this.notifyNodes(new NotifyMsg(NotifyType.EVICT,node,key,null));
+        NotifyMsg notifyMsg = new NotifyMsg(NotifyType.EVICT,node,key,null);
+        this.notifyNodes(notifyMsg);
     }
 
     public void clearLocal(){
@@ -92,7 +94,8 @@ public class RedisAndLocalCache implements Cache {
 
     @Override
     public void clear() {
+        NotifyMsg notifyMsg =new NotifyMsg(NotifyType.CLEAR,node,null,null);
         redisCache.clear();
-        this.notifyNodes(new NotifyMsg(NotifyType.CLEAR,node,null,null));
+        this.notifyNodes(notifyMsg);
     }
 }

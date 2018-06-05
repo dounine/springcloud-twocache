@@ -8,7 +8,7 @@ public class NotifyMsg implements Serializable {
     private String node;
     private Object key;
     private Object result;
-
+    public NotifyMsg(){}
     public NotifyMsg(NotifyType notifyType,String node,Object key,Object result){
         this.node = node;
         this.notifyType = notifyType;
@@ -22,6 +22,22 @@ public class NotifyMsg implements Serializable {
 
     public void setNotifyType(NotifyType notifyType) {
         this.notifyType = notifyType;
+    }
+
+    public String getCacheName() {
+        return cacheName;
+    }
+
+    public void setCacheName(String cacheName) {
+        this.cacheName = cacheName;
+    }
+
+    public String getNode() {
+        return node;
+    }
+
+    public void setNode(String node) {
+        this.node = node;
     }
 
     public Object getKey() {
@@ -38,21 +54,5 @@ public class NotifyMsg implements Serializable {
 
     public void setResult(Object result) {
         this.result = result;
-    }
-
-    public String getNode() {
-        return node;
-    }
-
-    public void setNode(String node) {
-        this.node = node;
-    }
-
-    public String getCacheName() {
-        return cacheName;
-    }
-
-    public void setCacheName(String cacheName) {
-        this.cacheName = cacheName;
     }
 }

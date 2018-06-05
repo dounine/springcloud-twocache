@@ -1,5 +1,7 @@
 package com.dounine.twocache.config;
 
+import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -8,6 +10,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -16,12 +19,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.io.UnsupportedEncodingException;
 
 @Configuration
-@ConditionalOnMissingBean(CacheManager.class)
-@ConditionalOnBean({RedisTemplate.class})
+//@ConditionalOnMissingBean(CacheManager.class)
+//@ConditionalOnBean({RedisTemplate.class})
 @ConditionalOnProperty(name = "twocache.enable",havingValue = "true")
 @EnableCaching
 public class TwoCacheConfig {
@@ -46,6 +50,19 @@ public class TwoCacheConfig {
     }
 
     @Bean
+    public RedisTemplate<String, Object> redisTemplate(JedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate();
+        template.setConnectionFactory(connectionFactory);
+        GenericFastJson2JsonRedisSerializer fastJsonRedisSerializer = new GenericFastJson2JsonRedisSerializer();
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(fastJsonRedisSerializer);
+        template.setHashValueSerializer(fastJsonRedisSerializer);
+        template.setDefaultSerializer(fastJsonRedisSerializer);
+        template.setValueSerializer(fastJsonRedisSerializer);
+        return template;
+    }
+
+    @Bean
     MessageListenerAdapter listenerAdapter(final TwoLevelCacheManager cacheManager){
         return new MessageListenerAdapter(new MessageListener() {
             @Override
@@ -61,7 +78,8 @@ public class TwoCacheConfig {
     }
 
     @Bean
-    public TwoLevelCacheManager cacheManager(RedisTemplate redisTemplate){
+    public TwoLevelCacheManager cacheManager(RedisTemplate<String,Object> redisTemplate){
         return new TwoLevelCacheManager(redisTemplate,topic,port);
     }
+
 }
